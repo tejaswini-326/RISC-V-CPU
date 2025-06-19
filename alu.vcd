@@ -1,0 +1,67 @@
+$date
+	Mon Jun  2 23:26:47 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module alu_tb $end
+$var wire 4 ! C [3:0] $end
+$var reg 4 " A [3:0] $end
+$var reg 4 # B [3:0] $end
+$var reg 4 $ opcode [3:0] $end
+$scope module uut $end
+$var wire 4 % A [3:0] $end
+$var wire 4 & B [3:0] $end
+$var wire 4 ' opcode [3:0] $end
+$var reg 4 ( C [3:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b1000 (
+b0 '
+b101 &
+b11 %
+b0 $
+b101 #
+b11 "
+b1000 !
+$end
+#10
+b110 !
+b110 (
+b1 $
+b1 '
+b10 #
+b10 &
+b1000 "
+b1000 %
+#20
+b1000 !
+b1000 (
+b10 $
+b10 '
+b1100 #
+b1100 &
+b1010 "
+b1010 %
+#30
+b1110 !
+b1110 (
+b11 $
+b11 '
+#40
+b0 !
+b0 (
+b101 $
+b101 '
+b1111 "
+b1111 %
+#50
