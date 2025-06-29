@@ -1,9 +1,4 @@
-module register(
-    input readwrite, clk,
-    input [4:0] read_addr1, read_addr2, write_addr,
-    output [31:0] read_data1, read_data2,
-    input [31:0] write_data
-);
+module register(input readwrite, clk, input [4:0] read_addr1, read_addr2, write_addr,output [31:0] read_data1, read_data2, input [31:0] write_data);
 
 reg [31:0] register_file[31:0];
 

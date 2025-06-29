@@ -1,4 +1,4 @@
-module control_unit(input [6:0]funct7, opcode, input [2:0] funct3, output reg MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, ALUop );
+module control_unit(input [6:0]funct7, opcode, input [2:0] funct3, output reg MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, ALUop);
 always@(*)begin
     case(opcode)
     7'd51 : begin //r type 

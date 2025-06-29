@@ -1,46 +1,29 @@
-module alu(input [31:0] A, B, input [3:0] ALUcontrol, output [31:0] alu_output);
+module alu(input [31:0] A, B, input [3:0] ALUcontrol, output reg [31:0] alu_output, output reg alu_zero);
 always @(*) begin
-    case (opcode)
-    7'd51: begin
-    case (funct3)
-        3'd0 : begin
-            case(funct7)
-                7'd0: C = A + B;
-                7'd2: C = A - B;
-            endcase; end;
-        3'd1 : C = A >> 1;
-        3'd2 : C = $signed(A) < $signed(B);
-        3'd3 : C = A < B;
-        3'd4 : C = A ^ B;
-        3'd5 : begin
-            case(funct7)
-                    7'd0: C = A << 1;
-                    7'd2: C = A <<< 1;
-            endcase;
-        end;
-        3'd6 : C = A | B;
-        3'd7 : C = A & B;
-    endcase;
-    end
-    7'd19: begin
-         case (funct3)
-        3'd0 : C = A + imm; 
-        3'd1 : C = A << imm[4:0];
-        3'd2 : C = ($signed(A) < $signed(imm))?1:0;
-        3'd3 : C = (A < imm)?1:0;
-        3'd4 : C = A ^ imm;
-        3'd5 : begin case (imm[11:5])
-                    7'd 0: C = A >> imm[4:0];
-                    7'd 2: C = A >>> imm[4:0];
-        endcase;
-        end;
-        3'd6 : C = A | imm;
-        3'd7 : C = A & imm;
-
+    case (ALUcontrol) 
+    4'b0010: alu_output =  A + B;
+    4'b0110: begin alu_output =  A - B;
+                    alu_zero = (A == B) end
+    4'b0011: alu_output =  A ^ B;
+    4'b0001: alu_output =  A | B;
+    4'b0000: alu_output =  A & B;
+    4'b1000: alu_output =  A << B;
+    4'b1001: alu_output =  A >> B;
+    4'b1010: alu_output =  A >>> B;
+    4'b0111: begin alu_output = ($signed(A) < $signed(B)) ? 1 : 0;
+                    alu_zero = ($signed(A) < $signed(B)) ? 1 : 0; end
+    4'b1011: begin alu_output = (A < B) ? 1 : 0;
+                    alu_zero = (A < B) ? 1 : 0; end
+    4'b0100: begin alu_output =  (A == B) ? 1: 0;
+                    alu_zero = (A == B) ? 1: 0; end
+    4'b0101: begin alu_output =  (A != B) ? 1:0;
+                    alu_zero = (A != B) ? 1:0; end
+    4'b1100: begin alu_output =  ($signed(A) >= $signed(B)) ? 1:0; 
+                    alu_zero = ($signed(A) >= $signed(B)) ? 1:0; end
+    4'b1101: begin alu_output =  (A >= B) ? 1: 0; 
+                    alu_zero =  (A >= B) ? 1: 0; end
+    default: begin alu_zero = 0; 
+                    alu_output = 0; end
     endcase
-    end
-    default: C = 32'd0;
-    endcase
-$display("%b", C);
 end
 endmodule

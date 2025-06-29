@@ -1,4 +1,4 @@
- module instruction_extractor(input [31:0] instruction, output reg [4:0] rs1, rs2, rd, output reg [6:0] funct7, output reg [2:0]funct3, output reg [31:0] imm);
+ module instruction_extractor(input [31:0] instruction, output reg [4:0] rs1, rs2, rd, output reg [6:0] funct7, output reg [2:0]funct3, output reg [31:0] imm, output wire [6:0]opcode);
  wire [6:0] opcode = instruction[6:0];
  always @(*) begin 
  case(opcode)
