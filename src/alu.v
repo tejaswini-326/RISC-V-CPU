@@ -1,3 +1,8 @@
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: this module performs arithmetic and logical operations
+*/
 module alu(input [31:0] A, B, input [3:0] ALUcontrol, output reg [31:0] alu_output, output reg alu_zero);
 always @(*) begin
     case (ALUcontrol) 
