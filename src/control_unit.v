@@ -1,4 +1,9 @@
-module control_unit(input [6:0]funct7, opcode, input [2:0] funct3, output reg MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, ALUop);
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: this module sends control signals for different operations depending on instructions received(see ref sheet)
+*/
+module control_unit(input [6:0]funct7, opcode, input [2:0] funct3, output reg MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, output reg [1:0] ALUop);
 always@(*)begin
     case(opcode)
     7'd51 : begin //r type 

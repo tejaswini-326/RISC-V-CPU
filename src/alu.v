@@ -3,7 +3,7 @@ always @(*) begin
     case (ALUcontrol) 
     4'b0010: alu_output =  A + B;
     4'b0110: begin alu_output =  A - B;
-                    alu_zero = (A == B) end
+                    alu_zero = (A == B); end
     4'b0011: alu_output =  A ^ B;
     4'b0001: alu_output =  A | B;
     4'b0000: alu_output =  A & B;

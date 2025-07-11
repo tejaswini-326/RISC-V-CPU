@@ -1,3 +1,8 @@
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: this module takes input addresses and reads or writes data in those addresses.
+*/
 module register(input readwrite, clk, input [4:0] read_addr1, read_addr2, write_addr,output [31:0] read_data1, read_data2, input [31:0] write_data);
 
 reg [31:0] register_file[31:0];

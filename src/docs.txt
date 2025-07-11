@@ -30,3 +30,4 @@ It outputs a 4-bit signal (alu_control) that tells the ALU what to do
 
 The ALU just obeys that signal
 
+`timescale <time units> -> to change timeunits. its a backtick not an apostrophe

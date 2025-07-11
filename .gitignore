@@ -1,0 +1,16 @@
+# Simulation output files
+*.vcd
+*.out
+*.bin
+*.hex~
+
+# Backup/temporary files
+*~
+*.swp
+*.log
+
+# Executables from Icarus Verilog
+*.vvp
+*.o
+top_testbench
+alu_test

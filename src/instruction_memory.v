@@ -1,3 +1,8 @@
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: this module reads instructions from a file contraining instructions and stores it in a 32bit register
+*/
 module instruction_memory (
     input [31:0] addr,
     output [31:0] instruction

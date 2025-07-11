@@ -1,3 +1,8 @@
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: this module receives instructions and sends operation signals to ALU
+*/
 module alu_control(input  [6:0] funct7,input  [2:0] funct3,input [31:0] imm, input  [1:0] ALUop,output reg [3:0] ALUcontrol);
 always @(*) begin
     case(ALUop)

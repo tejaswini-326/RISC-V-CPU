@@ -1,5 +1,11 @@
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: this module integrates all components of the CPU
+*/
 module top(input clk, reset_pc, readwrite_register);
-wire [31:0] curr_pc, next_pc, instruction, rs1, rs2, imm, rd;
+wire [31:0] curr_pc, next_pc, instruction, imm;
+wire [4:0] rs1, rs2, rd;
     wire [2:0] funct3;
     wire [6:0] funct7, opcode;
     wire [31:0] reg_read1, reg_read2, reg_write;
