@@ -13,7 +13,7 @@ always@(*)begin
         ALUsrc = 1'b0;
         Branch = 1'b0;
         RegWrite = 1'b1;
-        ALUop = 2'b00;
+        ALUop = 2'b10;
     end
     7'd19 : begin  //i type
         MemRead = 1'b0;
@@ -31,7 +31,7 @@ always@(*)begin
         ALUsrc =1'b1 ;
         Branch = 1'b0;
         RegWrite = 1'b1;
-        ALUop = 2'b01;
+        ALUop = 2'b00;
     end
     7'd35 : begin //store type
         MemRead = 1'b0;
@@ -40,7 +40,7 @@ always@(*)begin
         ALUsrc = 1'b1;
         Branch = 1'b0;
         RegWrite = 1'b0;
-        ALUop = 2'b01;
+        ALUop = 2'b00;
     end
     7'd99 : begin //branch
         MemRead = 1'b0;
@@ -49,7 +49,7 @@ always@(*)begin
         ALUsrc = 1'b0;
         Branch = 1'b1;
         RegWrite = 1'b0;
-        ALUop = 2'b10;
+        ALUop = 2'b01;
     end
     7'd111 : begin //jal
         MemRead = 1'b0;

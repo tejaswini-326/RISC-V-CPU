@@ -3,7 +3,7 @@ Dev: Tejaswini Anbazhagan
 Date: 11/7/2025
 Description: this module integrates all components of the CPU
 */
-module top(input clk, reset_pc, readwrite_register);
+module top(input clk, reset_pc);
 wire [31:0] curr_pc, next_pc, instruction, imm;
 wire [4:0] rs1, rs2, rd;
     wire [2:0] funct3;
@@ -85,7 +85,7 @@ control_unit CU(
 
 register register(
     .clk(clk),
-    .readwrite(readwrite_register),
+    .regwrite(RegWrite),
     .read_addr1(rs1),
     .read_addr2(rs2),
     .write_addr(rd),

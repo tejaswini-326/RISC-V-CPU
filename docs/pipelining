@@ -1,0 +1,39 @@
+IF: Instruction Fetch
+- save instruction from pc in if/id
+- increment pc address and write back for next cycle
+- save pc in if/id(prep for beq)
+
+ID:Instruction Decode(and rf read)
+- store sign expanded imm, rs1 and rs2 in id/ex;
+- store pc address in id/ex
+
+IF, ID executed for all instructions
+
+EX: Execute
+- stores results of execution
+
+MEM: Memory(access data memory)
+- read data memory using address from ex/mem
+- load data into mem/wb
+
+WB: Write back
+- read data from mem/wb and write it to register file
+
+------------------------------------------------------------------------------------
+- each datapath component can only be used within ONE pipeline stage, or else there would be a structural hazard. 
+- each control signal only needs ot be set at a particular pipeline stage(cause its associated with omponents that are active only in a single stage)
+
+- we send all control signals at ID and they get carried forward to different stages...(?)
+
+  |pipeline stage | signal |
+  --------------------------
+    IF   none
+    ID   none
+    EX   ALUop, ALUsrc
+    MEM  MemRead, MemWrite, Branch, PCsrc (selects the next sequential address unless Branch == 0 && ALUout == 0)
+    WB   MemtoReg, RegWrite
+
+    hazard detector:
+    - detect data hazard
+    - freeze pc read and if/id
+    - make ex/mem/wb do nops

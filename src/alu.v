@@ -1,5 +1,6 @@
 module alu(input [31:0] A, B, input [3:0] ALUcontrol, output reg [31:0] alu_output, output reg alu_zero);
 always @(*) begin
+    alu_zero = 0;
     case (ALUcontrol) 
     4'b0010: alu_output =  A + B;
     4'b0110: begin alu_output =  A - B;

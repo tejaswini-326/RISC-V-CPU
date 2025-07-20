@@ -6,7 +6,7 @@ Description: this module receives instructions and sends operation signals to AL
 module alu_control(input  [6:0] funct7,input  [2:0] funct3,input [31:0] imm, input  [1:0] ALUop,output reg [3:0] ALUcontrol);
 always @(*) begin
     case(ALUop)
-    2'b00: begin  // R-type
+    2'b10: begin  // R-type
         case (funct3)
         3'd0 : begin
             case(funct7)
@@ -52,7 +52,7 @@ always @(*) begin
         endcase
     end
 
-    2'b10: begin  // B-type
+    2'b01: begin  // B-type
         case (funct3)
         3'd0 : ALUcontrol = 4'b0100; // a==b
         3'd1 : ALUcontrol = 4'b0101; // a!=b

@@ -1,5 +1,6 @@
 hello
 docs for CPU
+ref sheet: https://docs.google.com/spreadsheets/d/1Oa1twXLr329e8N9DVO9GhLaH3rXHmLxvuHJT1ot_LE0/edit?usp=sharing
 
 1. ALU - performs basic operations:
 4'b0000: add
@@ -31,3 +32,29 @@ It outputs a 4-bit signal (alu_control) that tells the ALU what to do
 The ALU just obeys that signal
 
 `timescale <time units> -> to change timeunits. its a backtick not an apostrophe
+data written at a clk edge can only be accessed after the next clk edge
+
+PARAMETERS IN VERILOG
+<module> #(parameter <PARAMETER>)();
+then while instantiating:
+<module name> #(<param val>) <instance name>
+MAKING THE NUMBER OF INPUTS DYNAMIC:
+NO we canT do that >:(in 2001 we make a flattened multidimentional array and access via indexing)
+in newer verilog(SYSTEM VERILOG) we can make a multidimensional array without flattening
+module <module_name> #(parameter width = <default>, parameter num_inputs = <default>)(
+    input [width-1:0] in [num_inputs-1:0]
+);
+if the inputs are from different sources, do this when instantiating:
+    wire [31:0] a, b, c;
+    wire [1:0] sel;
+    wire [31:0] out;
+
+    param_mux #(.NUM_INPUTS(3), .WIDTH(32)) my_mux (
+        .in({c, b, a}),  // <- pack in reverse order cause verilog unpacks msb first i,e c will be set to mux input 2 here
+        .sel(sel),
+        .out(out)
+    )
+USING SYSTEM VERILOG FOR MUX.
+SLICING IN SYSTEM VERILOG
+somereg[start_point +: width] --> returns a slice of [start+width-1: start]
+anotherreg[start_point -: width] --> returns a slice of [start: start- (width - 1)]
