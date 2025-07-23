@@ -37,3 +37,15 @@ WB: Write back
     - detect data hazard
     - freeze pc read and if/id
     - make ex/mem/wb do nops
+
+    if/id : 96 // 74
+    id/ex : 256 // 119
+    ex/mem : 193 // 74
+    mem/wb : 128 // 71
+
+    pipeline_reg (#96)ifid(            THIS IS LEGAL.  WHY? IT AUTOMATICALLY MAPS THE VALUES FROM INPUT TO OUTPUT.
+    .clk(clk),                           - EVEN IF VALUES ARE SAME WE TREAT THEM AS SEPARATE WIRES/VARIABLES. ONE IS
+    .reset(reset),                         ASSIGNED AS BEFORE THE CLOCK CYCLE ENDS AND THE OTHER IS READ JUS AS IT BEGINS
+    .input1({curr_pc, instruction}),
+    .output1({ifid_pc, ifid_instruction})
+);

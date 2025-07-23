@@ -12,9 +12,21 @@ assign read_data1 = (read_addr1 == 5'd0) ? 32'd0 : register_file[read_addr1];
 assign read_data2 = (read_addr2 == 5'd0) ? 32'd0 : register_file[read_addr2];
 
 always @(posedge clk) begin
-    if (regwrite && (write_addr != 0)) begin // write only if write_addr != 0
+    if (regwrite && (write_addr != 0)) begin 
         register_file[write_addr] <= write_data;
     end
 end
 
 endmodule
+
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\
+//|\\

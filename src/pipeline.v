@@ -4,13 +4,14 @@ mux #(
     .input_width(32)
 )pc_mux(
     .allin({next_pc, b_adder}),
-    .select(), //ceiling log base 2 value for number of select
+    .select(Branch&alu_zero), 
     .mux_output(next_pc)
 );
 
 pc program_counter(
     .clk(clk),
     .reset(reset_pc),
+    .pcwrite(pcwrite),
     .next_pc(next_pc),
     .curr_pc(curr_pc)
 
@@ -23,18 +24,12 @@ instruction_memory im(
 pipeline_reg (#96)ifid(
     .clk(clk),
     .reset(reset),
-    .input1({curr_pc, instruction, 
-    MemRead, MemWrite, 
-    MemtoReg, ALUsrc, Branch, 
-    RegWrite, ALUop}),
-    .output1({curr_pc, instruction, 
-    MemRead, MemWrite, 
-    MemtoReg, ALUsrc, Branch, 
-    RegWrite, ALUop})
+    .input1({curr_pc, instruction, 32'b0}),
+    .output1({ifid_pc, ifid_instruction, 32'b0})
 );
 
 instruction_extractor instr_extr(
-    .instruction(instruction),
+    .instruction(ifid_instruction),
     .rs1(rs1),
     .rs2(rs2),
     .imm(imm),
@@ -44,7 +39,18 @@ instruction_extractor instr_extr(
     .opcode(opcode)
 );
 
-hazard_detector hazard();
+hazard_detector hazard(
+    .rs1(rs1),
+    .rs2(rs2),
+    .idex({control_mux, rs1, rs2, imm,
+    rd,
+    reg_read1,
+    reg_read2, 138'b0
+    }),   
+    .ifid_regwrite(ifid_regwrite), 
+    .pcwrite(pcwrite),
+    .stall(stall)
+);
 
 alu_control alu_control(
     .funct3(funct3),
@@ -101,76 +107,73 @@ alu branch_adder(
 
 mux #(   
     .num_inputs(2),
-    .input_width(7)
+    .input_width(8),
 )control_mux(
-    .allin({{MemRead, MemWrite, 
-    MemtoReg, ALUsrc, Branch, 
-    RegWrite, ALUop}, {7'b0}}),
-    .select(hazard_out), //ceiling log base 2 value for number of select
+    .allin({{MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, ALUop}, {8'b0}}),
+    .select(stall), 
     .mux_output(control_mux)
 );
 
 pipeline_reg (#256)idex(
-    .input1({MemRead, MemWrite, 
-    MemtoReg, ALUsrc, Branch, 
-    RegWrite, ALUop,
-    rs1,
-    rs2,
-    imm,
-    rd,
-    reg_read1,
-    reg_read2
-    }),
-    .output1({MemRead, MemWrite, 
-    MemtoReg, ALUsrc, Branch, 
-    RegWrite, ALUop,
-    rs1,
-    rs2,
-    imm,
-    rd,
-    reg_read1,
-    reg_read2
-    })
+    .clk(clk),
+    .reset(reset),
+    .regwrite(ifid_regwrite),
+    .input1({control_mux, rs1,rs2, imm, rd, reg_read1, reg_read2, 138'b0}),
+    .output1({idex_out_control, idex_out_rs1, idex_out_rs2, imm, idex_out_rd, reg_out_read1, reg_out_read2, 138'b0})
 );
-mux mux_a(
-    .num_inputs(3);
-    .input_width(32);
-)(
-    .allin({reg_read1, rd, alu_out}),
-    .select(fwA), //ceiling log base 2 value for number of select
-    .mux_output(A)
-);
-mux mux_b(
+mux #(
     .num_inputs(3),
     .input_width(32)
-)(
-    .allin({reg_read2, rd, alu_out}),
-    .select(fwB), //ceiling log base 2 value for number of select
+)mux_a(
+    .allin({reg_read1, reg_write, alu_out}),
+    .select(fwA), 
+    .mux_output(A)
+);
+mux #(
+    .num_inputs(3),
+    .input_width(32)
+)mux_b(
+    .allin({reg_read2, reg_write, alu_out}),
+    .select(fwB), 
     .mux_output(B)
 );
 alu alu(
     .A(A),
     .B(B),
     .ALUcontrol(ALUcontrol),
-    .alu_output(alu_out)
+    .alu_output(alu_output),
+    .alu_zero(alu_zero)
 );
 
-forward forward();
+forward forward(
+.idex({control_mux, rs1,rs2, imm, rd, reg_read1, reg_read2, 138'b0}),
+.exmem({idex_out_control,
+    idex_out_rd,
+    alu_out,
+    B_in,
+    117'b0
+    }),
+.memwb({exmem_out_control,
+    data_read_data,
+    alu_out2,
+    exmem_out_rd}),
+.fwA(fwA),
+.fwB(fwB)
+
+);
 
 pipeline_reg (#193)exmem(
-    .input1({MemRead, MemWrite, Branch,
-    MemtoReg,
-    RegWrite,
-    rd,
+    .input1({idex_out_control,
+    idex_out_rd,
     alu_out,
-    B
+    B_in,
+    117'b0
     }),
-    .output1({MemRead, MemWrite, Branch,
-    MemtoReg,
-    RegWrite,
-    rd,
-    alu_out,
-    B
+    .output1({exmem_out_control,
+    exmem_out_rd,
+    alu_out2,
+    B_out,
+    117'b0
     })
 );
 
@@ -183,23 +186,21 @@ data_memory data(
     .readdata(data_read_data)
 );
 pipeline_reg (#128)memwb(
-    .input1({MemtoReg,
-    RegWrite,
+    .input1({exmem_out_control,
+    data_read_data,
+    alu_out2,
+    exmem_out_rd}),
+    .output1({memwb_control,
     data_read_data,
     alu_out,
-    rd}),
-    .output1({MemtoReg,
-    RegWrite,
-    data_read_data,
-    alu_out,
-    rd})
+    rd, 57'b0})
 );
 mux #(
     .num_inputs(2),
     .input_width(32)
 )last_mux(
     .allin({data_read_data, alu_out}),
-    .select(), //ceiling log base 2 value for number of select
+    .select(MemtoReg), 
     .mux_output(reg_write)
 );
 
