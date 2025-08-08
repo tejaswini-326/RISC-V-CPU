@@ -6,7 +6,7 @@ Description: this module receives a 32 bit instruction and splits it into sub pa
  module instruction_extractor(input [31:0] instruction, output reg [4:0] rs1, rs2, rd, output reg [6:0] funct7, output reg [2:0]funct3, output reg [31:0] imm, output wire [6:0]opcode);
  assign opcode = instruction[6:0];
  always @(*) begin 
- case(opcode)
+ case(instruction[6:0]) 
     7'd 51: begin //r-type
         imm = 32'b0;
         rd = instruction[11:7];
@@ -82,7 +82,7 @@ Description: this module receives a 32 bit instruction and splits it into sub pa
         funct7 = 7'b0;
       end
       7'd111: begin //j-type 
-        imm = {instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'd0}; //again implicit 0 at im[0]
+        imm = {{11{instruction[31]}}, instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0}; //again implicit 0 at im[0]
         rd = instruction[11:7];
         rs1 = 5'b0;
         rs2 = 5'b0;

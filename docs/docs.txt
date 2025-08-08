@@ -18,6 +18,8 @@ ref sheet: https://docs.google.com/spreadsheets/d/1Oa1twXLr329e8N9DVO9GhLaH3rXHm
 iverilog -o alu_test//dump file// alu_tb.v //test bench//  alu.v //file to be tested//
 vvp alu_test
 
+ADD A -g2012 TAG BEFORE COMPIPLING AFTER IVERILOG TO ENABLE SYSTEM VERILOG
+
 put these right after initial begin
 
 $dumpfile("alu.vcd"); sets the camera location (filename for recording). i.e tells the simulation which file to test

@@ -12,7 +12,7 @@ module mux #(
     output reg [input_width-1:0] mux_output
 );
 
-always@(select) begin
+always@(*) begin
     mux_output = allin[select * input_width +: input_width];
 end
 
