@@ -214,6 +214,8 @@ forward forward(
 );
 
 pipeline_reg #(193)exmem(
+    .clk(clk),
+    .reset(reset),
     .regwrite(exmem_enable),
     .input1({idex_out_control, idex_out_rd, alu_out, B, 116'b0}),
     .output1({exmem_out_control, exmem_out_rd, alu_out2, B_out, exmem_dummy})
@@ -223,12 +225,14 @@ datamemory data(
     .clk(clk),
     .MemRead(exmem_out_control[7]),
     .MemWrite(exmem_out_control[6]),
-    .addr(alu_out),
+    .addr(alu_out2),
     .writedata(B_out),
     .readdata(data_read_data)
 );
 
 pipeline_reg #(128)memwb(
+    .clk(clk),
+    .reset(reset),
     .regwrite(memwb_enable),
     .input1({exmem_out_control, data_read_data, alu_out2, exmem_out_rd, 51'b0}),
     .output1({memwb_control, memwb_data_read_data, memwb_alu_out, memwb_rd, memwb_dummy})

@@ -60,3 +60,13 @@ USING SYSTEM VERILOG FOR MUX.
 SLICING IN SYSTEM VERILOG
 somereg[start_point +: width] --> returns a slice of [start+width-1: start]
 anotherreg[start_point -: width] --> returns a slice of [start: start- (width - 1)]
+
+fixed issues with pipeline registers, found new issues from waveform
+
+Key recurring issues:
+
+Decode stage is sometimes reading old instruction bits → IF/ID register not flushed/stalled correctly.
+Forwarding logic is incomplete: rs1/rs2 often get stale values.
+Load-use hazard detection missing → no bubble insertion when needed.
+Branch handling stalls unnecessarily or doesn’t flush at correct time.
+HALT detection is delayed by 1 cycle → probably only checked in MEM/WB instead of EX stage.
