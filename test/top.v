@@ -1,7 +1,7 @@
 /*
 Dev: Tejaswini Anbazhagan
 Date: 11/7/2025
-Description: this module integrates all components of the CPU
+Description: this module integrates all components of the CPU(single stage)
 */
 module top(input clk, reset_pc);
 wire [31:0] curr_pc, next_pc, instruction, imm;
