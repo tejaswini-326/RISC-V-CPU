@@ -67,7 +67,7 @@ always@(*)begin
         Branch = 1'b0;
         RegWrite = 1'b1;
     end
-    7'd55 : begin //lui
+    7'd55 : begin //lui == load upper immedaite, stores only top 20 bits
         MemRead = 1'b0;
         MemtoReg = 1'bx;
         MemWrite = 1'b0;

@@ -1,3 +1,8 @@
+/*
+Dev: Tejaswini Anbazhagan
+Date: 11/7/2025
+Description: This module detects data hazards and implements forwarding
+*/
 module forward(
     input [255:0] idex,
     input [192:0] exmem,

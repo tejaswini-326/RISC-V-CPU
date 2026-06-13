@@ -11,7 +11,7 @@ always @(*) begin
         3'd0 : begin
             case(funct7)
                 7'd0: ALUcontrol = 4'b0010; // C = A + B
-                7'd2: ALUcontrol = 4'b0110; // C = A - B
+                7'd32: ALUcontrol = 4'b0110; // C = A - B
                 default: ALUcontrol = 4'b1111;
             endcase
         end
@@ -22,7 +22,7 @@ always @(*) begin
         3'd5 : begin
             case(funct7)
                 7'd0: ALUcontrol = 4'b1001; // C = A >> B
-                7'd2: ALUcontrol = 4'b1010; // C = A >>> B
+                7'd32: ALUcontrol = 4'b1010; // C = A >>> B
                 default: ALUcontrol = 4'b1111;
             endcase
         end
@@ -42,7 +42,7 @@ always @(*) begin
         3'd5 : begin
             case(imm[11:5])
                 7'd0: ALUcontrol = 4'b1001; // C = A >> imm[4:0]
-                7'd2: ALUcontrol = 4'b1010; // C = A >>> imm[4:0]
+                7'd32: ALUcontrol = 4'b1010; // C = A >>> imm[4:0]
                 default: ALUcontrol = 4'b1111;
             endcase
         end

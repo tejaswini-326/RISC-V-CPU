@@ -7,7 +7,7 @@ wire [31:0] A, B;
 wire [31:0] alu_output, alu_out, alu_out2, B_in, B_out;
 wire [31:0] data_read_data;
 wire [31:0] b_eq;
-wire alu_zero;
+wire alu_zero, branch_alu_zero;
 wire [3:0] ALUcontrol;
 wire [6:0] opcode;
 wire [2:0] funct3;
@@ -57,7 +57,7 @@ mux #(
     .input_width(32)
 )pc_mux(
     .allin({b_adder, pc_add}),
-    .select({exmem_out_control[3]&alu_zero}),  //
+    .select({exmem_out_control[3]&branch_alu_zero}),  //
     .mux_output(next_pc)
 );
 
@@ -128,7 +128,7 @@ register register(
     .regwrite(memwb_control[2]),
     .read_addr1(rs1),
     .read_addr2(rs2),
-    .write_addr(rd),
+    .write_addr(memwb_rd),
     .read_data1(reg_read1),
     .read_data2(reg_read2),
     .write_data(reg_write)
@@ -138,7 +138,8 @@ alu reg_compare(
     .A(reg_read1),
     .B(reg_read2),
     .ALUcontrol(4'b0100),
-    .alu_output(b_eq)
+    .alu_output(b_eq),
+    .alu_zero(branch_alu_zero)
 );
 
 alu branch_sll(
@@ -160,7 +161,7 @@ mux #(
     .input_width(8)
 )control_mux(
     .allin({{8'b0}, {MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, ALUop}}),
-    .select( stall[0]),
+    .select(stall[0]),
     .mux_output(control_mux_wire)
 );
 
@@ -175,7 +176,7 @@ mux #(
     .num_inputs(3),
     .input_width(32)
 )mux_a(
-    .allin({memwb_alu_out, reg_write, reg_out_read1}),
+    .allin({alu_out2, reg_write, reg_out_read1}),
     .select(fwA), 
     .mux_output(A)
 );
@@ -183,7 +184,7 @@ mux #(
     .num_inputs(3),
     .input_width(32)
 )mux_b(
-    .allin({ memwb_alu_out, reg_write, reg_out_read2}),
+    .allin({alu_out2, reg_write, reg_out_read2}),
     .select(fwB), 
     .mux_output(mux_B)
 
@@ -206,7 +207,7 @@ alu alu(
 );
 
 forward forward(
-.idex({idex_out_control, idex_out_rs1, idex_out_rs2, imm, idex_out_rd, reg_out_read1, reg_out_read2, idex_dummy}),
+.idex({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_dummy}),
 .exmem({exmem_out_control, exmem_out_rd, alu_out2, B_out, exmem_dummy}),
 .memwb({memwb_control, memwb_data_read_data, memwb_alu_out, memwb_rd, memwb_dummy}),
 .fwA(fwA),

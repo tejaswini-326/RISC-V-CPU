@@ -6,6 +6,12 @@ Description: this module receives a 32 bit instruction and splits it into sub pa
  module instruction_extractor(input [31:0] instruction, output reg [4:0] rs1, rs2, rd, output reg [6:0] funct7, output reg [2:0]funct3, output reg [31:0] imm, output wire [6:0]opcode);
  assign opcode = instruction[6:0];
  always @(*) begin 
+    imm    = 32'b0;
+    rs1    = 5'b0;
+    rs2    = 5'b0;
+    rd     = 5'b0;
+    funct3 = 3'b0;
+    funct7 = 7'b0;
  case(instruction[6:0]) 
     7'd 51: begin //r-type
         imm = 32'b0;
@@ -53,15 +59,15 @@ Description: this module receives a 32 bit instruction and splits it into sub pa
         rs2 = instruction[24:20];
         rs1 = instruction[19:15];
         funct3 = instruction[14:12];
-        rd = instruction[11:7];
+        rd = 5'b0;
         funct7 = 7'b0;
                 
       end
       7'd 99: begin //b-type
-        imm = {{19{instruction[31]}},instruction[31], instruction[7], instruction[30:25], instruction[11:6], 1'd0}; //last bit of b type is always 0 cause branches are word aligned
+        imm = {{19{instruction[31]}},instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'd0}; //last bit of b type is always 0 cause branches are word aligned
         rs2 = instruction[24:20];
         rs1 = instruction[19:15];
-        rd = instruction[11:7];
+        rd = 5'b0;
         funct3 = instruction[14:12];
         funct7 = 7'b0;
       end
