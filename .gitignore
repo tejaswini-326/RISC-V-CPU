@@ -8,7 +8,7 @@ q# Simulation output files
 *~
 *.swp
 *.log
-
+*.gtkw
 # Executables from Icarus Verilog
 *.vvp
 *.o
