@@ -39,11 +39,15 @@ wire ifid_regwrite, pcwrite;
 wire [1:0]stall;
 wire [1:0] fwA, fwB;
 
+wire flush;
+
 wire[7:0] control_mux_wire;
 wire idex_enable, exmem_enable, memwb_enable;
 assign idex_enable = 1'b1;
 assign exmem_enable = 1'b1;
 assign memwb_enable = 1'b1;
+
+assign flush = exmem_out_control[3] & branch_alu_zero;
 
 alu pc_adder(
     .A(curr_pc),
@@ -57,7 +61,7 @@ mux #(
     .input_width(32)
 )pc_mux(
     .allin({b_adder, pc_add}),
-    .select({exmem_out_control[3]&branch_alu_zero}),  //
+    .select({exmem_out_control[3]&branch_alu_zero}),  //this is PCSrc
     .mux_output(next_pc)
 );
 
@@ -78,7 +82,7 @@ pipeline_reg #(96)ifid(
     .clk(clk),
     .reset(reset),
     .regwrite(ifid_regwrite),
-    .input1({curr_pc, instruction, 32'b0}),
+    .input1(flush ? 96'b0: {curr_pc, instruction, 32'b0}),
     .output1({ifid_pc, ifid_instruction, ifid_dummy})
 );
 
@@ -135,8 +139,8 @@ register register(
 );
 
 alu reg_compare(
-    .A(reg_read1),
-    .B(reg_read2),
+    .A(A),
+    .B(mux_B),
     .ALUcontrol(4'b0100),
     .alu_output(b_eq),
     .alu_zero(branch_alu_zero)
@@ -161,7 +165,7 @@ mux #(
     .input_width(8)
 )control_mux(
     .allin({{8'b0}, {MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, ALUop}}),
-    .select(stall[0]),
+    .select(stall[0]|flush),
     .mux_output(control_mux_wire)
 );
 
@@ -169,7 +173,7 @@ pipeline_reg #(256)idex(
     .clk(clk),
     .reset(reset),
     .regwrite(idex_enable),
-    .input1({control_mux_wire, rs1, rs2,  imm, rd, reg_read1, reg_read2, 137'b0}),
+    .input1((stall[0] | flush) ? 256'b0 :{control_mux_wire, rs1, rs2,  imm, rd, reg_read1, reg_read2, 137'b0}),
     .output1({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_dummy})
 );
 mux #(

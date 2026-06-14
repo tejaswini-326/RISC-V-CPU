@@ -5,6 +5,13 @@ Description: this module sends control signals for different operations dependin
 */
 module control_unit(input [6:0]funct7, opcode, input [2:0] funct3, output reg MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite, output reg [1:0] ALUop);
 always@(*)begin
+    MemRead  = 0;
+    MemWrite = 0;
+    MemtoReg = 0;
+    ALUsrc   = 0;
+    Branch   = 0;
+    RegWrite = 0;
+    ALUop    = 2'b00;
     case(opcode)
     7'd51 : begin //r type 
         MemRead = 1'b0;
@@ -35,7 +42,7 @@ always@(*)begin
     end
     7'd35 : begin //store type
         MemRead = 1'b0;
-        MemtoReg = 1'bx;
+        MemtoReg = 1'b0;
         MemWrite = 1'b1;
         ALUsrc = 1'b1;
         Branch = 1'b0;
@@ -44,7 +51,7 @@ always@(*)begin
     end
     7'd99 : begin //branch
         MemRead = 1'b0;
-        MemtoReg = 1'bx;
+        MemtoReg = 1'b0;
         MemWrite = 1'b0;
         ALUsrc = 1'b0;
         Branch = 1'b1;
@@ -55,7 +62,7 @@ always@(*)begin
         MemRead = 1'b0;
         MemtoReg = 1'b0;
         MemWrite = 1'b0;
-        ALUsrc = 1'bx;
+        ALUsrc = 1'b0;
         Branch = 1'b0;
         RegWrite = 1'b1;
     end
@@ -69,7 +76,7 @@ always@(*)begin
     end
     7'd55 : begin //lui == load upper immedaite, stores only top 20 bits
         MemRead = 1'b0;
-        MemtoReg = 1'bx;
+        MemtoReg = 1'b0;
         MemWrite = 1'b0;
         ALUsrc = 1'b0;
         Branch = 1'b1;
@@ -77,7 +84,7 @@ always@(*)begin
     end
     7'd23 : begin //aiupc
         MemRead = 1'b0;
-        MemtoReg = 1'bx;
+        MemtoReg = 1'b0;
         MemWrite = 1'b0;
         ALUsrc = 1'b0;
         Branch = 1'b1;
@@ -85,7 +92,7 @@ always@(*)begin
     end
     7'd115 : begin //ecall, ebreak
         MemRead = 1'b0;
-        MemtoReg = 1'bx;
+        MemtoReg = 1'b0;
         MemWrite = 1'b0;
         ALUsrc = 1'b0;
         Branch = 1'b1;
