@@ -64,6 +64,11 @@ always @(*) begin
         endcase
     end
 
+    2'b00: begin 
+        ALUcontrol = 4'b0010;
+
+    end
+
     default: ALUcontrol = 4'b1111; // C = invalid
     endcase
 end

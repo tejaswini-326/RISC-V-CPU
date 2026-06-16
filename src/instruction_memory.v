@@ -8,7 +8,7 @@ module instruction_memory (
     output [31:0] instruction
 );
 
-    reg [31:0] memory [0:255]; // 1KB instruction memory
+    reg [31:0] memory [0:527]; // 1KB instruction memory
 
     assign instruction = memory[addr[9:2]]; // word-aligned access
 

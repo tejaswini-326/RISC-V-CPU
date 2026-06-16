@@ -64,7 +64,7 @@ Description: this module receives a 32 bit instruction and splits it into sub pa
                 
       end
       7'd 99: begin //b-type
-        imm = {{19{instruction[31]}},instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'd0}; //last bit of b type is always 0 cause branches are word aligned
+        imm = {{20{instruction[31]}},instruction[31], instruction[7], instruction[30:25], instruction[11:8]}; //last bit of b type is always 0 cause branches are word aligned
         rs2 = instruction[24:20];
         rs1 = instruction[19:15];
         rd = 5'b0;
@@ -88,7 +88,7 @@ Description: this module receives a 32 bit instruction and splits it into sub pa
         funct7 = 7'b0;
       end
       7'd111: begin //j-type 
-        imm = {{11{instruction[31]}}, instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0}; //again implicit 0 at im[0]
+        imm = {{12{instruction[31]}}, instruction[31], instruction[19:12], instruction[20], instruction[30:21]}; //again implicit 0 at im[0]
         rd = instruction[11:7];
         rs1 = 5'b0;
         rs2 = 5'b0;

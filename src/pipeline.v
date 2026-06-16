@@ -10,8 +10,8 @@ wire [31:0] b_eq;
 wire alu_zero, branch_alu_zero;
 wire [3:0] ALUcontrol;
 wire [6:0] opcode;
-wire [2:0] funct3;
-wire [6:0] funct7;
+wire [2:0] funct3, idex_funct3;
+wire [6:0] funct7, idex_funct7;
 wire [4:0]rs1, rs2, rd;
 wire MemRead, MemWrite, MemtoReg, ALUsrc, Branch, RegWrite;
 wire [1:0] ALUop;
@@ -21,8 +21,8 @@ wire [31:0] ifid_pc, ifid_instruction, ifid_dummy;
 // ID/EX
 wire [7:0] idex_out_control;
 wire [4:0] idex_out_rs1, idex_out_rs2, idex_out_rd;
-wire [31:0] reg_out_read1, reg_out_read2, imm_out;
-wire [136:0] idex_dummy;
+wire [31:0] reg_out_read1, reg_out_read2, imm_out, idex_pc;
+wire [94:0] idex_dummy;
 
 // EX/MEM
 wire [7:0] exmem_out_control;
@@ -47,7 +47,14 @@ assign idex_enable = 1'b1;
 assign exmem_enable = 1'b1;
 assign memwb_enable = 1'b1;
 
-assign flush = exmem_out_control[3] & branch_alu_zero;
+
+wire branch_taken;
+assign branch_taken = (idex_funct3 == 3'b000) ?  branch_alu_zero :   // beq
+                      (idex_funct3 == 3'b001) ? ~branch_alu_zero :   // bne
+                      1'b0; // other branch types
+
+assign flush = (idex_out_control[3]==1'b1) && branch_taken;
+//assign flush = (idex_out_control[3]==1'b1) &&(branch_alu_zero== 1'b1);
 
 alu pc_adder(
     .A(curr_pc),
@@ -61,7 +68,7 @@ mux #(
     .input_width(32)
 )pc_mux(
     .allin({b_adder, pc_add}),
-    .select({exmem_out_control[3]&branch_alu_zero}),  //this is PCSrc
+    .select((idex_out_control[3]==1'b1) &&(branch_taken== 1'b1)),  //this is PCSrc
     .mux_output(next_pc)
 );
 
@@ -100,15 +107,15 @@ instruction_extractor instr_extr(
 hazard_detector hazard(
     .rs1(rs1),
     .rs2(rs2),
-    .idex({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_dummy}),   
+    .idex({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_pc, idex_funct3, idex_funct7, idex_dummy}),   
     .ifid_regwrite(ifid_regwrite), 
     .pcwrite(pcwrite),
     .stall(stall)
 );
 
 alu_control alu_control(
-    .funct3(funct3),
-    .funct7(funct7),
+    .funct3(idex_funct3),
+    .funct7(idex_funct7),
     .imm(imm),
     .ALUop(idex_out_control [1:0]),
     .ALUcontrol(ALUcontrol)
@@ -147,14 +154,14 @@ alu reg_compare(
 );
 
 alu branch_sll(
-    .A(imm),
+    .A(imm_out),
     .B(32'd1),
     .ALUcontrol(4'b1000),
     .alu_output(imm_sll)
 );
 
 alu branch_adder(
-    .A(ifid_pc),
+    .A(idex_pc),
     .B(imm_sll),
     .ALUcontrol(4'b0010),
     .alu_output(b_adder)
@@ -173,8 +180,8 @@ pipeline_reg #(256)idex(
     .clk(clk),
     .reset(reset),
     .regwrite(idex_enable),
-    .input1((stall[0] | flush) ? 256'b0 :{control_mux_wire, rs1, rs2,  imm, rd, reg_read1, reg_read2, 137'b0}),
-    .output1({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_dummy})
+    .input1((stall[0] | flush) ? 256'b0 :{control_mux_wire, rs1, rs2,  imm, rd, reg_read1, reg_read2, ifid_pc, funct3, funct7, 95'b0}),
+    .output1({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_pc, idex_funct3, idex_funct7, idex_dummy})
 );
 mux #(
     .num_inputs(3),
@@ -211,7 +218,7 @@ alu alu(
 );
 
 forward forward(
-.idex({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_dummy}),
+.idex({idex_out_control, idex_out_rs1, idex_out_rs2, imm_out, idex_out_rd, reg_out_read1, reg_out_read2, idex_pc, idex_funct3, idex_funct7, idex_dummy}),
 .exmem({exmem_out_control, exmem_out_rd, alu_out2, B_out, exmem_dummy}),
 .memwb({memwb_control, memwb_data_read_data, memwb_alu_out, memwb_rd, memwb_dummy}),
 .fwA(fwA),
@@ -222,7 +229,7 @@ pipeline_reg #(193)exmem(
     .clk(clk),
     .reset(reset),
     .regwrite(exmem_enable),
-    .input1({idex_out_control, idex_out_rd, alu_out, B, 116'b0}),
+    .input1({idex_out_control, idex_out_rd, alu_out, mux_B, 116'b0}),
     .output1({exmem_out_control, exmem_out_rd, alu_out2, B_out, exmem_dummy})
 );
 

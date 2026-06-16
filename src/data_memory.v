@@ -5,7 +5,7 @@ Description: this module is a 32bit register which is used to load and store dat
 */
 module datamemory(input wire clk, MemRead, MemWrite, input reg [31:0] addr, writedata, output reg [31:0] readdata);
 
-reg [31:0] memory [0:255];
+reg [31:0] memory [0:527];
 
 always@(posedge clk) begin 
     if(MemWrite) begin 
