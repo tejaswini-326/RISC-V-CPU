@@ -1,4 +1,4 @@
-q# Simulation output files
+# Simulation output files
 *.vcd
 *.out
 *.bin
@@ -15,4 +15,5 @@ q# Simulation output files
 top_testbench
 alu_test
 /docs
+/references
 *_tb.v
