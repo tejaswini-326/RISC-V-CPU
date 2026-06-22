@@ -1,5 +1,5 @@
 # RISC-V Pipelined CPU
-
+This is a **solo project**, designed and implemented by **Tejaswini Anbazhagan**
 A 5-stage pipelined RISC-V (RV32I subset) CPU implemented in Verilog, featuring full data forwarding, hazard detection, and branch handling.
 
 ## Architecture
