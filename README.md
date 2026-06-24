@@ -1,7 +1,7 @@
 # RISC-V Pipelined CPU
 A 5-stage pipelined RISC-V (RV32I subset) CPU implemented in Verilog, featuring full data forwarding, hazard detection, and branch handling.
 
-**Solo project**, designed and implemented by **tejaswini-326**
+This is an **independent project**, fully designed and implemented by **tejaswini-326**
 
 ## Architecture
 
