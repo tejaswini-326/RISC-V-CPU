@@ -23,6 +23,7 @@ Pipeline registers (IF/ID, ID/EX, EX/MEM, MEM/WB) separate each stage and carry 
 - **Hazard detection** — Load-use hazards detected and resolved via pipeline stalling
 - **Branch handling** — Branch outcomes resolved in EX stage with 1-cycle flush penalty on taken branches; supports `beq` and `bne`
 - **Modular design** — Each component (ALU, control unit, forwarding unit, hazard detector, pipeline registers, MUX) is independently implemented and reusable
+- Pipeline register and MUX are parametrised to accomodate varying input lengths depending on use
 - **Hex-file program loading** — Instruction memory initialized via `.hex` file, allowing programs to be swapped without modifying hardware
 
 ## Supported Instructions
